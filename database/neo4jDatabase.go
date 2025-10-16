@@ -2,9 +2,10 @@ package database
 
 import (
 	"context"
-	"crave/shared/configuration"
 	"fmt"
 	"log"
+
+	"github.com/daeroworld/shared/configuration"
 
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 )

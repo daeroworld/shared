@@ -3,7 +3,8 @@ package database
 import (
 	"fmt"
 	"log"
-	"mntreamer/shared/configuration"
+
+	"github.com/daeroworld/shared/configuration"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

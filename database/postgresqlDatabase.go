@@ -1,41 +1,29 @@
 package database
 
 import (
-	"context"
-	"time"
+	"fmt"
 
-	"github.com/daeroworld/whiscript-shared/configuration"
-	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/daeroworld/shared/configuration"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 type PostgresqlWrapper struct {
-	Pool *pgxpool.Pool
+	Driver *gorm.DB
 }
 
 func ConnectPostgresqlDatabase(database *configuration.Database) *PostgresqlWrapper {
-	config, err := pgxpool.ParseConfig(database.Uri)
+
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=whiscript port=9920 sslmode=disable TimeZone=Asia/Seoul", database.Uri, database.Username, database.Password)
+	driver, err := gorm.Open(postgres.New(postgres.Config{
+		DSN:                  dsn,
+		PreferSimpleProtocol: true, // disables implicit prepared statement usage
+	}), &gorm.Config{})
 	if err != nil {
 		return nil
 	}
-	config.MaxConns = 20
-	config.MinConns = 2
-	config.MaxConnLifetime = time.Hour
-	config.HealthCheckPeriod = 30 * time.Second
-	ctx := context.Background()
-	pool, err := pgxpool.NewWithConfig(ctx, config)
-	wrapper := &PostgresqlWrapper{
-		Pool: pool,
+	return &PostgresqlWrapper{
+		Driver: driver,
 	}
-	ctxPing, cancel := context.WithTimeout(ctx, 5*time.Second)
-	defer cancel()
-	if err := pool.Ping(ctxPing); err != nil {
-		pool.Close()
-		return nil
-	}
-
-	return wrapper
-}
-
-func (p *PostgresqlWrapper) CloseDatabbase() {
-	p.Pool.Close()
 }
