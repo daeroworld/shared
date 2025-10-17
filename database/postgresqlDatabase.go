@@ -15,7 +15,7 @@ type PostgresqlWrapper struct {
 
 func ConnectPostgresqlDatabase(database *configuration.Database) *PostgresqlWrapper {
 
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=whiscript port=9920 sslmode=disable TimeZone=Asia/Seoul", database.Uri, database.Username, database.Password)
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=whiscript port=5432 sslmode=disable TimeZone=Asia/Seoul", database.Uri, database.Username, database.Password)
 	driver, err := gorm.Open(postgres.New(postgres.Config{
 		DSN:                  dsn,
 		PreferSimpleProtocol: true, // disables implicit prepared statement usage
