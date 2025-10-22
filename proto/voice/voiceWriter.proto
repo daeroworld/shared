@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option go_package = ".;voice";
+
+service VoiceWriter {
+     rpc Submit(VoiceSubmitRequest) returns (VoiceSubmitResponse);
+}
+
+message VoiceSubmitRequest {
+    string jobId = 1;
+    bytes audio = 2;  // The prompt content that will be processed
+}
+
+message VoiceSubmitResponse {
+  string id = 1;    
+  string status = 2;       
+  string error = 3;
+} 
