@@ -26,7 +26,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type VoiceWriterClient interface {
-	Submit(ctx context.Context, in *VoiceSubmitRequest, opts ...grpc.CallOption) (*VoiceSubmitResponse, error)
+	Submit(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[VoiceSubmitRequest, VoiceSubmitResponse], error)
 }
 
 type voiceWriterClient struct {
@@ -37,21 +37,24 @@ func NewVoiceWriterClient(cc grpc.ClientConnInterface) VoiceWriterClient {
 	return &voiceWriterClient{cc}
 }
 
-func (c *voiceWriterClient) Submit(ctx context.Context, in *VoiceSubmitRequest, opts ...grpc.CallOption) (*VoiceSubmitResponse, error) {
+func (c *voiceWriterClient) Submit(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[VoiceSubmitRequest, VoiceSubmitResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(VoiceSubmitResponse)
-	err := c.cc.Invoke(ctx, VoiceWriter_Submit_FullMethodName, in, out, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &VoiceWriter_ServiceDesc.Streams[0], VoiceWriter_Submit_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &grpc.GenericClientStream[VoiceSubmitRequest, VoiceSubmitResponse]{ClientStream: stream}
+	return x, nil
 }
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type VoiceWriter_SubmitClient = grpc.ClientStreamingClient[VoiceSubmitRequest, VoiceSubmitResponse]
 
 // VoiceWriterServer is the server API for VoiceWriter service.
 // All implementations must embed UnimplementedVoiceWriterServer
 // for forward compatibility.
 type VoiceWriterServer interface {
-	Submit(context.Context, *VoiceSubmitRequest) (*VoiceSubmitResponse, error)
+	Submit(grpc.ClientStreamingServer[VoiceSubmitRequest, VoiceSubmitResponse]) error
 	mustEmbedUnimplementedVoiceWriterServer()
 }
 
@@ -62,8 +65,8 @@ type VoiceWriterServer interface {
 // pointer dereference when methods are called.
 type UnimplementedVoiceWriterServer struct{}
 
-func (UnimplementedVoiceWriterServer) Submit(context.Context, *VoiceSubmitRequest) (*VoiceSubmitResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Submit not implemented")
+func (UnimplementedVoiceWriterServer) Submit(grpc.ClientStreamingServer[VoiceSubmitRequest, VoiceSubmitResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method Submit not implemented")
 }
 func (UnimplementedVoiceWriterServer) mustEmbedUnimplementedVoiceWriterServer() {}
 func (UnimplementedVoiceWriterServer) testEmbeddedByValue()                     {}
@@ -86,23 +89,12 @@ func RegisterVoiceWriterServer(s grpc.ServiceRegistrar, srv VoiceWriterServer) {
 	s.RegisterService(&VoiceWriter_ServiceDesc, srv)
 }
 
-func _VoiceWriter_Submit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(VoiceSubmitRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(VoiceWriterServer).Submit(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: VoiceWriter_Submit_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VoiceWriterServer).Submit(ctx, req.(*VoiceSubmitRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+func _VoiceWriter_Submit_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(VoiceWriterServer).Submit(&grpc.GenericServerStream[VoiceSubmitRequest, VoiceSubmitResponse]{ServerStream: stream})
 }
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type VoiceWriter_SubmitServer = grpc.ClientStreamingServer[VoiceSubmitRequest, VoiceSubmitResponse]
 
 // VoiceWriter_ServiceDesc is the grpc.ServiceDesc for VoiceWriter service.
 // It's only intended for direct use with grpc.RegisterService,
@@ -110,12 +102,13 @@ func _VoiceWriter_Submit_Handler(srv interface{}, ctx context.Context, dec func(
 var VoiceWriter_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "VoiceWriter",
 	HandlerType: (*VoiceWriterServer)(nil),
-	Methods: []grpc.MethodDesc{
+	Methods:     []grpc.MethodDesc{},
+	Streams: []grpc.StreamDesc{
 		{
-			MethodName: "Submit",
-			Handler:    _VoiceWriter_Submit_Handler,
+			StreamName:    "Submit",
+			Handler:       _VoiceWriter_Submit_Handler,
+			ClientStreams: true,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
 	Metadata: "voiceWriter.proto",
 }

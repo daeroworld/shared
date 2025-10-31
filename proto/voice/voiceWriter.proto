@@ -3,7 +3,7 @@ syntax = "proto3";
 option go_package = ".;voice";
 
 service VoiceWriter {
-     rpc Submit(VoiceSubmitRequest) returns (VoiceSubmitResponse);
+     rpc Submit(stream VoiceSubmitRequest) returns (VoiceSubmitResponse);
 }
 
 message VoiceSubmitRequest {
