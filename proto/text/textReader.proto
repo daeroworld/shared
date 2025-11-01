@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option go_package = ".;text";
+
+service TextReader {
+     rpc Count(TextCountRequest) returns (TextCountResponse);
+     rpc Retrieve(TextRetrieveRequest) returns (TextRetrieveResponse);
+}
+
+message TextCountRequest {
+    string id = 1;
+}
+
+message TextCountResponse {   
+  int32 count = 2;
+} 
+
+message TextRetrieveRequest {
+    string id = 1;
+    int32 index = 2;
+}
+
+message TextRetrieveResponse {
+  string id = 1;
+  string content = 2;
+} 
