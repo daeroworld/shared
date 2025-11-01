@@ -4,7 +4,7 @@
 // - protoc             v3.6.1
 // source: textWriter.proto
 
-package Text
+package text
 
 import (
 	context "context"
