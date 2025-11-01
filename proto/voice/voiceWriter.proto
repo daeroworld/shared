@@ -12,7 +12,5 @@ message VoiceSubmitRequest {
 }
 
 message VoiceSubmitResponse {
-  string id = 1;    
-  string status = 2;       
-  string error = 3;
+  string id = 1;
 } 
