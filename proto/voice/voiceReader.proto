@@ -11,11 +11,8 @@ message VoiceCountRequest {
     string id = 1;
 }
 
-message VoiceCountResponse {
-  string id = 1;    
+message VoiceCountResponse {  
   int32 count = 2;
-  string status = 3;
-  string error = 4;
 } 
 
 message VoiceRetrieveRequest {
@@ -26,6 +23,4 @@ message VoiceRetrieveRequest {
 message VoiceRetrieveResponse {
   string id = 1;    
   bytes chunk = 2;
-  string status = 3;
-  string error = 4;
 } 
