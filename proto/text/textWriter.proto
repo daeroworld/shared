@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option go_package = ".;Text";
+
+service TextWriter {
+     rpc Generate(TextGenerateRequest) returns (TextGenerateResponse);
+}
+
+message TextGenerateRequest {
+    string id = 1; // voice Id
+}
+
+message TextGenerateResponse {
+  string id = 1;    
+} 
