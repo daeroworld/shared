@@ -17,7 +17,7 @@ type Text struct {
 }
 
 func (Text) TableName() string {
-	return "Text"
+	return "text"
 }
 
 func (f *Text) GetId() uuid.UUID {
