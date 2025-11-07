@@ -23,4 +23,6 @@ message TextRetrieveRequest {
 message TextRetrieveResponse {
   string id = 1;
   string content = 2;
+  double start = 3;
+  double end = 4;
 } 

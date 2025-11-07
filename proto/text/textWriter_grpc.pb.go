@@ -8,6 +8,7 @@ package text
 
 import (
 	context "context"
+	empty "github.com/golang/protobuf/ptypes/empty"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -19,7 +20,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TextWriter_Generate_FullMethodName = "/TextWriter/Generate"
+	TextWriter_Generate_FullMethodName      = "/TextWriter/Generate"
+	TextWriter_UpdateContent_FullMethodName = "/TextWriter/UpdateContent"
 )
 
 // TextWriterClient is the client API for TextWriter service.
@@ -27,6 +29,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TextWriterClient interface {
 	Generate(ctx context.Context, in *TextGenerateRequest, opts ...grpc.CallOption) (*TextGenerateResponse, error)
+	UpdateContent(ctx context.Context, in *UpdateContentRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
 type textWriterClient struct {
@@ -47,11 +50,22 @@ func (c *textWriterClient) Generate(ctx context.Context, in *TextGenerateRequest
 	return out, nil
 }
 
+func (c *textWriterClient) UpdateContent(ctx context.Context, in *UpdateContentRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, TextWriter_UpdateContent_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TextWriterServer is the server API for TextWriter service.
 // All implementations must embed UnimplementedTextWriterServer
 // for forward compatibility.
 type TextWriterServer interface {
 	Generate(context.Context, *TextGenerateRequest) (*TextGenerateResponse, error)
+	UpdateContent(context.Context, *UpdateContentRequest) (*empty.Empty, error)
 	mustEmbedUnimplementedTextWriterServer()
 }
 
@@ -64,6 +78,9 @@ type UnimplementedTextWriterServer struct{}
 
 func (UnimplementedTextWriterServer) Generate(context.Context, *TextGenerateRequest) (*TextGenerateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Generate not implemented")
+}
+func (UnimplementedTextWriterServer) UpdateContent(context.Context, *UpdateContentRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateContent not implemented")
 }
 func (UnimplementedTextWriterServer) mustEmbedUnimplementedTextWriterServer() {}
 func (UnimplementedTextWriterServer) testEmbeddedByValue()                    {}
@@ -104,6 +121,24 @@ func _TextWriter_Generate_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TextWriter_UpdateContent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateContentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TextWriterServer).UpdateContent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TextWriter_UpdateContent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TextWriterServer).UpdateContent(ctx, req.(*UpdateContentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TextWriter_ServiceDesc is the grpc.ServiceDesc for TextWriter service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -114,6 +149,10 @@ var TextWriter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Generate",
 			Handler:    _TextWriter_Generate_Handler,
+		},
+		{
+			MethodName: "UpdateContent",
+			Handler:    _TextWriter_UpdateContent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

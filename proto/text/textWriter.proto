@@ -1,9 +1,12 @@
 syntax = "proto3";
 
+import "google/protobuf/empty.proto";
+
 option go_package = ".;text";
 
 service TextWriter {
      rpc Generate(TextGenerateRequest) returns (TextGenerateResponse);
+     rpc UpdateContent(UpdateContentRequest) returns (google.protobuf.Empty);
 }
 
 message TextGenerateRequest {
@@ -11,5 +14,11 @@ message TextGenerateRequest {
 }
 
 message TextGenerateResponse {
-  string id = 1;    
+  string id = 1;  
+  int32 count = 2;  
 } 
+
+message UpdateContentRequest {
+    string id = 1; 
+    string content = 2;
+}
