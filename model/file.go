@@ -7,17 +7,16 @@ import (
 )
 
 type File struct {
-
-	ID            uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
-	Filename      string
-	DurationMs    int64
-	Format        string
-	SizeBytes     int64
-	TotalChunks   int
-	Status        string                 `gorm:"default:pending"`
-	WhisperConfig map[string]interface{} `gorm:"type:jsonb"`
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
+	ID          uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
+	Filename    string
+	DurationMs  int64
+	Format      string
+	SizeBytes   int64
+	TotalChunks int
+	Status      string                 `gorm:"default:pending"`
+	Config      map[string]interface{} `gorm:"type:jsonb"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 func (File) TableName() string {
