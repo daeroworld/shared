@@ -5,6 +5,7 @@ type Variable struct {
 	VoiceWriterApi *Api
 	VoiceReaderApi *Api
 	TextWriterApi  *Api
+	TextReaderApi  *Api
 	Frontend       *Api
 }
 
@@ -19,6 +20,12 @@ func NewVariable() *Variable {
 		},
 		TextWriterApi: &Api{
 			Port: 25013,
+		},
+		TextReaderApi: &Api{
+			Port: 25014,
+		},
+		Frontend: &Api{
+			Port: 25001,
 		},
 	}
 }
