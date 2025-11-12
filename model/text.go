@@ -9,7 +9,7 @@ import (
 type Text struct {
 	ID          uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
 	Filename    string
-	VoiceIndex  int
+	ChunkIndex  int
 	TextIndex   int
 	Index       int
 	Start       float64
@@ -27,11 +27,11 @@ func (f *Text) GetId() uuid.UUID {
 	return f.ID
 }
 
-func CreateText(filename string, voiceIdx, textIdx, idx int, start, end float64, content string) *Text {
+func CreateText(filename string, chunkIdx, textIdx, idx int, start, end float64, content string) *Text {
 	return &Text{
 		ID:          uuid.New(),
 		Filename:    filename,
-		VoiceIndex:  voiceIdx,
+		ChunkIndex:  chunkIdx,
 		TextIndex:   textIdx,
 		Index:       idx,
 		Start:       start,
